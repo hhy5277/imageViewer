@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"/>
+	<title>js图片查看器(可缩放、旋转、翻转)</title>
+	<link rel="stylesheet" href="css/demo.css" />
+    <link rel="stylesheet" href="../dist/css/imageViewer.min.css" />
+	<script src="../dist/js/common.min.js"></script>
+	<script src="../dist/js/imageViewer.min.js"></script>
+</head>
+<body>
+    <h1>js图片查看器(可缩放、旋转、翻转)</h1>
+    <div id="imageViewer">
+        <div style="width: 100px; height: 100px; overflow: hidden">
+            <img src="img/img_1.jpg" height="100"/>
+        </div>
+    </div>
+    <input id="imageLeft" type="button" value="向左旋转">
+    <input id="imageRight" type="button" value="向右旋转">
+    <input id="imageVertical" type="button" value="垂直翻转">
+    <input id="imageHorizontal" type="button" value="水平翻转">
+    <input id="imageReset" type="button" value="重置">
+    <br>
+    <input id="imageSrc" type="text" value="img_2.jpg">
+    <input id="imageLoad" type="button" value="换图">
+    <br>
+    ps：鼠标拖动图片旋转，鼠标滚动滚轮缩放。<br><br>
+    <script>
+        (function() {
+            var container = $$("imageViewer"),
+                src = "img/img_1.jpg",
+                options = {
+                    onPreLoad: function() {
+                        container.style.backgroundImage = "url('img/loading.gif')";
+                    },
+                    onLoad: function() {
+                        container.style.backgroundImage = "";
+                    }
+                },
+                it = new imageViewer(container, options);
+            it.load(src);
+
+            //垂直翻转
+            $$("imageVertical").onclick = function() {
+                it.vertical();
+            };
+
+            //水平翻转
+            $$("imageHorizontal").onclick = function() {
+                it.horizontal();
+            };
+
+            //左旋转
+            $$("imageLeft").onclick = function() {
+                it.left();
+            };
+
+            //右旋转
+            $$("imageRight").onclick = function() {
+                it.right();
+            };
+
+            //重置
+            $$("imageReset").onclick = function() {
+                it.reset();
+            };
+
+            //换图
+            $$("imageLoad").onclick = function() {
+                it.load("img/" + $$("imageSrc").value);
+            };
+        })();
+    </script>
+</body>
+</html>

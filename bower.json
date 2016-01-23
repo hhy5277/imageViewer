@@ -1,0 +1,17 @@
+{
+  "name": "colorpicker",
+  "description": "颜色选择器",
+  "main": "index.js",
+  "authors": [
+    "laixiangran"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "colorPicker"
+  ],
+  "homepage": "https://github.com/laixiangran/colorPicker",
+  "private": true,
+  "dependencies": {
+    "bootstrap": "~3.3.6"
+  }
+}
