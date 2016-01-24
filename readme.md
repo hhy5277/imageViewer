@@ -1,7 +1,7 @@
 #图片查看器 imageViewer v1.0.0
 ##简介
 
-纯javascript图片查看器，可缩放、旋转、翻转
+纯javascript图片查看器，可缩放（滚轮）、旋转（中键）、平移（左键）、翻转
 
 ###模式
 
@@ -9,13 +9,13 @@
 
 ###默认属性
 
-    this.options = {
-                    mode: "css3|filter|canvas", // 默认，根据浏览器支持的情况选择合适的模式
-                    zoom: 0.1, // 缩放比率
-                    onPreLoad: function() {}, // 图片加载前执行
-                    onLoad: function() {}, // 图片加载后执行
-                    onError: function(err) {} // 出错时执行
-                };
+    options = {
+                mode: "css3|filter|canvas", // 默认，根据浏览器支持的情况选择合适的模式
+                zoom: 0.1, // 缩放比率
+                onPreLoad: function() {}, // 图片加载前执行
+                onLoad: function() {}, // 图片加载后执行
+                onError: function(err) {} // 出错时执行
+            };
 
 ##使用
 ###引入
