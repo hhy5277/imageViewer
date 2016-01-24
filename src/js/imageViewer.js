@@ -18,7 +18,7 @@
 
         // 初始化程序
         _initialize: function(container, options) {
-            var container = this._container = $$(container);
+            var container = this._container = COM.$D.byID(container);
             this._clientWidth = container.clientWidth; // 变换区域宽度
             this._clientHeight = container.clientHeight; // 变换区域高度
             this._img = new Image(); // 图片对象
@@ -26,7 +26,7 @@
             this._x = this._y = 1; // 水平/垂直变换参数
             this._radian = 0; // 旋转变换参数
             this._support = false; // 是否支持变换
-            this._init = this._load = this._show = this._dispose = $$.emptyFunction;
+            this._init = this._load = this._show = this._dispose = COM.$O.noop;
 
             // 设置默认属性
             var opt = this._setOptions(options);
@@ -34,13 +34,13 @@
             this.onPreLoad = opt.onPreLoad;
             this.onLoad = opt.onLoad;
             this.onError = opt.onError;
-            this._LOAD = $$F.bind(function() {
+            this._LOAD = COM.$F.bind(function() {
                 this.onLoad();
                 this._load();
                 this.reset();
                 this._img.style.visibility = "visible";
             }, this);
-            $$CE.fireEvent(this, "init");
+            COM.$CE.fireEvent(this, "init");
         },
 
         // 设置默认属性
@@ -52,13 +52,13 @@
                 onLoad: function() {}, // 图片加载后执行
                 onError: function(err) {} // 出错时执行
             };
-            return $$.extend(this.options, options || {});
+            return COM.$O.extend(this.options, options || {});
         },
 
         // 模式设置
         _initMode: function() {
             var modes = imageViewer.modes;
-            this._support = $$A.some(this.options.mode.toLowerCase().split("|"), function(mode) {
+            this._support = COM.$A.some(this.options.mode.toLowerCase().split("|"), function(mode) {
                 mode = modes[mode];
                 if (mode && mode.support) {
                     mode.init && (this._init = mode.init); // 初始化执行程序
@@ -67,7 +67,7 @@
                     mode.dispose && (this._dispose = mode.dispose); // 销毁程序
 
                     //扩展变换方法
-                    $$A.forEach(imageViewer.transforms, function(transform, name) {
+                    COM.$A.forEach(imageViewer.transforms, function(transform, name) {
                         this[name] = function() {
                             transform.apply(this, [].slice.call(arguments));
                             this._show();
@@ -82,7 +82,7 @@
         _initContainer: function() {
             var container = this._container,
                 style = container.style,
-                position = $$D.getStyle(container, "position");
+                position = COM.$D.getStyle(container, "position");
             this._style = { // 备份样式
                 "position": style.position,
                 "overflow": style.overflow
@@ -91,7 +91,7 @@
                 style.position = "relative";
             }
             style.overflow = "hidden";
-            $$CE.fireEvent(this, "initContainer");
+            COM.$CE.fireEvent(this, "initContainer");
         },
 
         // 加载图片
@@ -122,8 +122,8 @@
         dispose: function() {
             if (this._support) {
                 this._dispose();
-                $$CE.fireEvent(this, "dispose");
-                $$D.setStyle(this._container, this._style); // 恢复样式
+                COM.$CE.fireEvent(this, "dispose");
+                COM.$D.setStyle(this._container, this._style); // 恢复样式
                 this._container = this._img = this._img.onload = this._img.onerror = this._LOAD = null;
             }
         }
@@ -137,7 +137,7 @@
 
         // 初始化图片对象函数
         function initImg(img, container) {
-            $$D.setStyle(img, {
+            COM.$D.setStyle(img, {
                 position: "absolute",
 
                 //重置样式
@@ -173,7 +173,7 @@
                 // 检测是否支持css3
                 support: (function() {
                     var style = document.createElement("div").style;
-                    return $$A.some(["transform", "MozTransform", "webkitTransform", "OTransform"], function(css) {
+                    return COM.$A.some(["transform", "MozTransform", "webkitTransform", "OTransform"], function(css) {
                         if (css in style) {
                             css3Transform = css;
                             return true;
@@ -185,7 +185,7 @@
                 },
                 load: function() {
                     var img = this._img;
-                    $$D.setStyle(img, { // 居中
+                    COM.$D.setStyle(img, { // 居中
                         top: (this._clientHeight - img.offsetHeight) / 2 + "px",
                         left: (this._clientWidth - img.offsetWidth) / 2 + "px",
                         visibility: "visible"
@@ -224,7 +224,7 @@
                     var img = this._img;
 
                     // 设置滤镜
-                    $$.extend(
+                    COM.$.extend(
                         img.filters.item("DXimageViewerform.Microsoft.Matrix"),
                         getMatrix(this._radian, this._y, this._x)
                     );
@@ -250,7 +250,7 @@
                         context = this._context = canvas.getContext("2d");
 
                     // 样式设置
-                    $$D.setStyle(canvas, {
+                    COM.$D.setStyle(canvas, {
                         position: "absolute",
                         left: 0,
                         top: 0
@@ -355,15 +355,15 @@
             methods = {
                 "init": function() {
                     this._mrX = this._mrY = this._mrRadian = 0;
-                    this._mrSTART = $$F.bind(start, this);
-                    this._mrMOVE = $$F.bind(move, this);
-                    this._mrSTOP = $$F.bind(stop, this);
+                    this._mrSTART = COM.$F.bind(start, this);
+                    this._mrMOVE = COM.$F.bind(move, this);
+                    this._mrSTOP = COM.$F.bind(stop, this);
                 },
                 "initContainer": function() {
-                    $$E.addEvent(this._container, "mousedown", this._mrSTART);
+                    COM.$E.addEvent(this._container, "mousedown", this._mrSTART);
                 },
                 "dispose": function() {
-                    $$E.removeEvent(this._container, "mousedown", this._mrSTART);
+                    COM.$E.removeEvent(this._container, "mousedown", this._mrSTART);
                     this._mrSTOP();
                     this._mrSTART = this._mrMOVE = this._mrSTOP = null;
                 }
@@ -380,7 +380,7 @@
 
             // 判断鼠标中键
             if (hasebtn && e.button === 1) {
-                var rect = $$D.clientRect(this._container);
+                var rect = COM.$D.clientRect(this._container);
                 this._mrX = rect.left + this._clientWidth / 2;
                 this._mrY = rect.top + this._clientHeight / 2;
 
@@ -396,18 +396,18 @@
                 temptop = parseInt(this._img.style.top); // 初始top
                 templeft = parseInt(this._img.style.left); // 初始left
             }
-            $$E.addEvent(document, "mousemove", this._mrMOVE);
-            $$E.addEvent(document, "mouseup", this._mrSTOP);
-            if ($$B.ie) {
+            COM.$E.addEvent(document, "mousemove", this._mrMOVE);
+            COM.$E.addEvent(document, "mouseup", this._mrSTOP);
+            if (COM.$B.browser.ie) {
 
                 /*
                  * 当鼠标移动到文档外放开鼠标就触发不了mouseup事件，
                  * 这时使用setCapture()的话，可以触发losecapture事件，效果与mouseup事件一样
                  * */
-                $$E.addEvent(container, "losecapture", this._mrSTOP);
+                COM.$E.addEvent(container, "losecapture", this._mrSTOP);
                 container.setCapture();
             } else {
-                $$E.addEvent(window, "blur", this._mrSTOP);
+                COM.$E.addEvent(window, "blur", this._mrSTOP);
                 e.preventDefault(); // 取消事件的默认动作
             }
         }
@@ -434,16 +434,16 @@
 
         //停止函数
         function stop() {
-            $$E.removeEvent(document, "mousemove", this._mrMOVE);
-            $$E.removeEvent(document, "mouseup", this._mrSTOP);
-            if ($$B.ie) {
+            COM.$E.removeEvent(document, "mousemove", this._mrMOVE);
+            COM.$E.removeEvent(document, "mouseup", this._mrSTOP);
+            if (COM.$B.browser.ie) {
                 var container = this._container;
-                $$E.removeEvent(container, "losecapture", this._mrSTOP);
+                COM.$E.removeEvent(container, "losecapture", this._mrSTOP);
 
                 // 与setCapture()成对出现，取消该对象对鼠标的监控
                 container.releaseCapture();
             } else {
-                $$E.removeEvent(window, "blur", this._mrSTOP);
+                COM.$E.removeEvent(window, "blur", this._mrSTOP);
             }
         }
         return function() {
@@ -451,8 +451,8 @@
             if (!options || options.mouseRotate !== false) {
 
                 //扩展钩子
-                $$A.forEach(methods, function(method, name) {
-                    $$CE.addEvent(this, name, method);
+                COM.$A.forEach(methods, function(method, name) {
+                    COM.$CE.addEvent(this, name, method);
                 }, this);
             }
             init.apply(this, arguments);
@@ -462,16 +462,16 @@
     // 鼠标滚轮缩放图片扩展
     imageViewer.prototype._initialize = (function() {
         var init = imageViewer.prototype._initialize,
-            mousewheel = $$B.firefox ? "DOMMouseScroll" : "mousewheel",
+            mousewheel = COM.$B.browser.firefox ? "DOMMouseScroll" : "mousewheel",
             methods = {
                 "init": function() {
-                    this._mzZoom = $$F.bind(zoom, this);
+                    this._mzZoom = COM.$F.bind(zoom, this);
                 },
                 "initContainer": function() {
-                    $$E.addEvent(this._container, mousewheel, this._mzZoom);
+                    COM.$E.addEvent(this._container, mousewheel, this._mzZoom);
                 },
                 "dispose": function() {
-                    $$E.removeEvent(this._container, mousewheel, this._mzZoom);
+                    COM.$E.removeEvent(this._container, mousewheel, this._mzZoom);
                     this._mzZoom = null;
                 }
             };
@@ -486,8 +486,8 @@
             if (!options || options.mouseZoom !== false) {
 
                 //扩展钩子
-                $$A.forEach(methods, function(method, name) {
-                    $$CE.addEvent(this, name, method);
+                COM.$A.forEach(methods, function(method, name) {
+                    COM.$CE.addEvent(this, name, method);
                 }, this);
             }
             init.apply(this, arguments);

@@ -20,7 +20,7 @@
 ##使用
 ###引入
     // common.js是自己维护的一个js库，汇集了开发时常用的方法
-    <script src="../dist/js/common.min.js"></script>
+    <script src="js/commonJS/common.min.js"></script>
     <script src="../dist/js/imageViewer.min.js"></script>
 ###添加容器
     <div id="imageViewer"></div>
@@ -36,5 +36,5 @@
                 container.style.backgroundImage = "";
             }
         },
-        iv = new imageViewer(container, options);
+        iv = new imageViewer("imageViewer", options);
     iv.load(src);

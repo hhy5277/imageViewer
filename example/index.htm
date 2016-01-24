@@ -5,8 +5,8 @@
 	<title>js图片查看器(可缩放、旋转、翻转)</title>
 	<link rel="stylesheet" href="css/demo.css" />
     <link rel="stylesheet" href="../dist/css/imageViewer.min.css" />
-	<script src="../dist/js/common.min.js"></script>
-	<script src="../dist/js/imageViewer.min.js"></script>
+    <script src="js/commonJS/common.min.js"></script>
+	<script src="../dist/js/imageViewer.js"></script>
 </head>
 <body>
     <h1>js图片查看器(可缩放、旋转、翻转)</h1>
@@ -27,7 +27,7 @@
     ps：鼠标拖动图片旋转，鼠标滚动滚轮缩放。<br><br>
     <script>
         (function() {
-            var container = $$("imageViewer"),
+            var container = COM.$D.byID("imageViewer"),
                 src = "img/img_1.jpg",
                 options = {
                     onPreLoad: function() {
@@ -37,37 +37,37 @@
                         container.style.backgroundImage = "";
                     }
                 },
-                it = new imageViewer(container, options);
-            it.load(src);
+                iv = new imageViewer("imageViewer", options);
+            iv.load(src);
 
             //垂直翻转
-            $$("imageVertical").onclick = function() {
-                it.vertical();
+            COM.$D.byID("imageVertical").onclick = function() {
+                iv.vertical();
             };
 
             //水平翻转
-            $$("imageHorizontal").onclick = function() {
-                it.horizontal();
+            COM.$D.byID("imageHorizontal").onclick = function() {
+                iv.horizontal();
             };
 
             //左旋转
-            $$("imageLeft").onclick = function() {
-                it.left();
+            COM.$D.byID("imageLeft").onclick = function() {
+                iv.left();
             };
 
             //右旋转
-            $$("imageRight").onclick = function() {
-                it.right();
+            COM.$D.byID("imageRight").onclick = function() {
+                iv.right();
             };
 
             //重置
-            $$("imageReset").onclick = function() {
-                it.reset();
+            COM.$D.byID("imageReset").onclick = function() {
+                iv.reset();
             };
 
             //换图
-            $$("imageLoad").onclick = function() {
-                it.load("img/" + $$("imageSrc").value);
+            COM.$D.byID("imageLoad").onclick = function() {
+                iv.load("img/" + COM.$D.byID("imageSrc").value);
             };
         })();
     </script>
