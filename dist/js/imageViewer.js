@@ -9,16 +9,21 @@
         if (this._support) {
             this._initContainer();
             this._init();
+            if (this.options.sources.length > 0) {
+                // 默认加载第一张
+                this.load(this.options.sources[0]);
+            } else {
+                this.onError("without a image.");
+            }
         }else { // 模式不支持
-            this.onError("not support");
+            this.onError("not support this mode.");
         }
     };
 
     imageViewer.prototype = {
-
         // 初始化程序
-        _initialize: function(container, options) {
-            var container = this._container = COM.$D.byID(container);
+        _initialize: function(containerId, options) {
+            var container = this._container = COM.$D.byID(containerId);
             this._clientWidth = container.clientWidth; // 变换区域宽度
             this._clientHeight = container.clientHeight; // 变换区域高度
             this._img = new Image(); // 图片对象
@@ -46,11 +51,14 @@
         // 设置默认属性
         _setOptions: function(options) {
             this.options = {
+                sources: [],
                 mode: "css3|filter|canvas",
                 zoom: 0.1, // 缩放比率
                 onPreLoad: function() {}, // 图片加载前执行
                 onLoad: function() {}, // 图片加载后执行
-                onError: function(err) {} // 出错时执行
+                onError: function(err) { // 出错时执行
+                    throw new Error(err);
+                }
             };
             return COM.$O.extend(this.options, options || {});
         },
@@ -114,6 +122,13 @@
             if (this._support) {
                 this._x = this._y = 1;
                 this._radian = 0;
+                if (this._context) {
+                    this._imgInitLeft = -this._img.width / 2;
+                    this._imgInitTop = -this._img.height / 2;
+                } else {
+                    this._img.style.top = this._imgInitTop;
+                    this._img.style.left = this._imgInitLeft;
+                }
                 this._show();
             }
         },
@@ -131,7 +146,6 @@
 
     // 变换模式
     imageViewer.modes = (function() {
-
         //ccs3变换样式
         var css3Transform;
 
@@ -140,7 +154,7 @@
             COM.$D.setStyle(img, {
                 position: "absolute",
 
-                //重置样式
+                // 重置样式
                 border: 0,
                 padding: 0,
                 margin: 0,
@@ -167,9 +181,7 @@
 
         return {
             css3: {
-
                 // css3设置
-
                 // 检测是否支持css3
                 support: (function() {
                     var style = document.createElement("div").style;
@@ -184,15 +196,17 @@
                     initImg(this._img, this._container);
                 },
                 load: function() {
-                    var img = this._img;
-                    COM.$D.setStyle(img, { // 居中
-                        top: (this._clientHeight - img.offsetHeight) / 2 + "px",
-                        left: (this._clientWidth - img.offsetWidth) / 2 + "px",
+                    this._imgInitTop = (this._clientHeight - this._img.offsetHeight) / 2 + "px";
+                    this._imgInitLeft = (this._clientWidth - this._img.offsetWidth) / 2 + "px";
+                    COM.$D.setStyle(this._img, { // 居中
+                        top: this._imgInitTop,
+                        left: this._imgInitLeft,
                         visibility: "visible"
                     });
                 },
                 show: function() {
                     var matrix = getMatrix(this._radian, this._y, this._x);
+
                     // 设置变形样式
                     this._img.style[css3Transform ] = "matrix(" +
                         matrix.M11.toFixed(16) + "," + matrix.M21.toFixed(16) + "," +
@@ -203,9 +217,7 @@
                 }
             },
             filter: {
-
                 // filter设置
-
                 // 检测是否支持filter
                 support: (function() {
                     return "filters" in document.createElement("div");
@@ -221,26 +233,22 @@
                     this._img.style.visibility = "visible";
                 },
                 show: function() {
-                    var img = this._img;
-
                     // 设置滤镜
-                    COM.$.extend(
-                        img.filters.item("DXimageViewerform.Microsoft.Matrix"),
+                    COM.$O.extend(
+                        this._img.filters.item("DXimageViewerform.Microsoft.Matrix"),
                         getMatrix(this._radian, this._y, this._x)
                     );
 
                     // 保持居中
-                    img.style.top = (this._clientHeight - img.offsetHeight) / 2 + "px";
-                    img.style.left = (this._clientWidth - img.offsetWidth) / 2 + "px";
+                    this._imgInitTop = this._img.style.top = (this._clientHeight - this._img.offsetHeight) / 2 + "px";
+                    this._imgInitLeft = this._img.style.left = (this._clientWidth - this._img.offsetWidth) / 2 + "px";
                 },
                 dispose: function(){
                     this._container.removeChild(this._img);
                 }
             },
             canvas: {
-
                 // canvas设置
-
                 // 检测是否支持canvas
                 support: (function() {
                     return "getContext" in document.createElement("canvas");
@@ -264,14 +272,15 @@
                         context = this._context,
                         clientWidth = this._clientWidth,
                         clientHeight = this._clientHeight;
-
                     // canvas变换
                     context.save();
                     context.clearRect(0, 0, clientWidth, clientHeight); // 清空内容
                     context.translate(clientWidth / 2, clientHeight / 2); // 中心坐标
                     context.rotate(this._radian); // 旋转
                     context.scale(this._y, this._x); // 缩放
-                    context.drawImage(img, -img.width / 2, -img.height / 2); // 居中画图
+                    this._imgInitLeft = this._imgInitLeft || (-img.width / 2);
+                    this._imgInitTop = this._imgInitTop || (-img.height / 2);
+                    context.drawImage(img, this._imgInitLeft, this._imgInitTop); // 默认居中画图
                     context.restore();
                 },
                 dispose: function() {
@@ -369,7 +378,7 @@
                 }
             };
 
-        //定义两个临时变量来保存img的top和left
+        // 定义两个临时变量来保存img的top和left
         var temptop = 0;
         var templeft = 0;
 
@@ -393,13 +402,17 @@
             } else if (hasebtn && e.button === 0) { // 鼠标左键
                 this._mrX = e.clientX;
                 this._mrY = e.clientY;
-                temptop = parseInt(this._img.style.top); // 初始top
-                templeft = parseInt(this._img.style.left); // 初始left
+                if (this._context) {
+                    templeft = parseInt(this._imgInitLeft);
+                    temptop = parseInt(this._imgInitTop);
+                } else {
+                    temptop = parseInt(this._img.style.top);
+                    templeft = parseInt(this._img.style.left);
+                }
             }
             COM.$E.addEvent(document, "mousemove", this._mrMOVE);
             COM.$E.addEvent(document, "mouseup", this._mrSTOP);
             if (COM.$B.browser.ie) {
-
                 /*
                  * 当鼠标移动到文档外放开鼠标就触发不了mouseup事件，
                  * 这时使用setCapture()的话，可以触发losecapture事件，效果与mouseup事件一样
@@ -420,8 +433,14 @@
             } else if (hasebtn && e.button === 0) {
                 var offsetY = parseInt(e.clientY - this._mrY);
                 var offsetX = parseInt(e.clientX - this._mrX);
-                this._img.style.top = (temptop + offsetY) + "px";
-                this._img.style.left = (templeft + offsetX) + "px";
+                if (this._context) {
+                    this._imgInitLeft = templeft + offsetX;
+                    this._imgInitTop = temptop + offsetY;
+                    this._show();
+                } else {
+                    this._img.style.top = (temptop + offsetY) + "px";
+                    this._img.style.left = (templeft + offsetX) + "px";
+                }
             }
 
             /*
@@ -449,7 +468,6 @@
         return function() {
             var options = arguments[1];
             if (!options || options.mouseRotate !== false) {
-
                 //扩展钩子
                 COM.$A.forEach(methods, function(method, name) {
                     COM.$CE.addEvent(this, name, method);
@@ -484,7 +502,6 @@
         return function() {
             var options = arguments[1];
             if (!options || options.mouseZoom !== false) {
-
                 //扩展钩子
                 COM.$A.forEach(methods, function(method, name) {
                     COM.$CE.addEvent(this, name, method);

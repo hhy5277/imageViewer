@@ -9,27 +9,22 @@
 	<script src="../dist/js/imageViewer.js"></script>
 </head>
 <body>
-    <h1>js图片查看器(可缩放、旋转、翻转)</h1>
-    <div id="imageViewer">
-        <div style="width: 100px; height: 100px; overflow: hidden">
-            <img src="img/img_1.jpg" height="100"/>
-        </div>
+    <div id="imageViewer"></div>
+    <div id="tools">
+        <input id="imageZoomin" type="button" value="放大">
+        <input id="imageZoomout" type="button" value="缩小">
+        <input id="imageLeft" type="button" value="向左旋转">
+        <input id="imageRight" type="button" value="向右旋转">
+        <input id="imageVertical" type="button" value="垂直翻转">
+        <input id="imageHorizontal" type="button" value="水平翻转">
+        <input id="imageReset" type="button" value="重置"><br>
+        <span>注：鼠标左键拖动图片，鼠标中键旋转图片，鼠标滚动缩放图片。</span>
     </div>
-    <input id="imageLeft" type="button" value="向左旋转">
-    <input id="imageRight" type="button" value="向右旋转">
-    <input id="imageVertical" type="button" value="垂直翻转">
-    <input id="imageHorizontal" type="button" value="水平翻转">
-    <input id="imageReset" type="button" value="重置">
-    <br>
-    <input id="imageSrc" type="text" value="img_2.jpg">
-    <input id="imageLoad" type="button" value="换图">
-    <br>
-    ps：鼠标拖动图片旋转，鼠标滚动滚轮缩放。<br><br>
     <script>
         (function() {
             var container = COM.$D.byID("imageViewer"),
-                src = "img/img_1.jpg",
                 options = {
+                    sources: ["img/img_1.jpg"],
                     onPreLoad: function() {
                         container.style.backgroundImage = "url('img/loading.gif')";
                     },
@@ -38,36 +33,40 @@
                     }
                 },
                 iv = new imageViewer("imageViewer", options);
-            iv.load(src);
 
-            //垂直翻转
+            // 放大
+            COM.$D.byID("imageZoomin").onclick = function() {
+                iv.zoomin();
+            };
+
+            // 缩小
+            COM.$D.byID("imageZoomout").onclick = function() {
+                iv.zoomout();
+            };
+
+            // 垂直翻转
             COM.$D.byID("imageVertical").onclick = function() {
                 iv.vertical();
             };
 
-            //水平翻转
+            // 水平翻转
             COM.$D.byID("imageHorizontal").onclick = function() {
                 iv.horizontal();
             };
 
-            //左旋转
+            // 向左旋转90度
             COM.$D.byID("imageLeft").onclick = function() {
                 iv.left();
             };
 
-            //右旋转
+            // 向右旋转90度
             COM.$D.byID("imageRight").onclick = function() {
                 iv.right();
             };
 
-            //重置
+            // 重置
             COM.$D.byID("imageReset").onclick = function() {
                 iv.reset();
-            };
-
-            //换图
-            COM.$D.byID("imageLoad").onclick = function() {
-                iv.load("img/" + COM.$D.byID("imageSrc").value);
             };
         })();
     </script>
