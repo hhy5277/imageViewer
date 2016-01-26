@@ -7,10 +7,7 @@
     min-width: 400px;
     min-height: 400px;
 }
-/*.imageViewer*/
-.imageViewerContext .imageViewer {
-
-}
+/*.smallImageViewer*/
 .imageViewerContext .smallImageViewer {
     margin: 2px auto;
     width: 800px;
