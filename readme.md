@@ -23,6 +23,7 @@
 ###引入
 
     // common.js是自己维护的一个js库，汇集了开发时常用的方法
+    // github: https://github.com/laixiangran/commonJS
     <script src="js/commonJS/common.min.js"></script>
     <script src="../dist/js/imageViewer.min.js"></script>
     
