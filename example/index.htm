@@ -22,17 +22,19 @@
     </div>
     <script>
         (function() {
-            var container = COM.$D.byID("imageViewer"),
-                options = {
-                    sources: ["img/img_1.jpg"],
-                    onPreLoad: function() {
-                        container.style.backgroundImage = "url('img/loading.gif')";
-                    },
-                    onLoad: function() {
-                        container.style.backgroundImage = "";
-                    }
+
+            // 初始化imageViewer
+            var iv = new imageViewer("imageViewer", {
+                sources: ["img/img_1.jpg"],
+                onPreLoad: function() {
+                    container.style.backgroundImage = "url('img/loading.gif')";
                 },
-                iv = new imageViewer("imageViewer", options);
+                onLoad: function() {
+                    container.style.backgroundImage = "";
+                }
+            });
+
+            var container = COM.$D.byID("imageViewer");
 
             // 放大
             COM.$D.byID("imageZoomin").onclick = function() {
@@ -68,6 +70,7 @@
             COM.$D.byID("imageReset").onclick = function() {
                 iv.reset();
             };
+
         })();
     </script>
 </body>

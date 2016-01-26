@@ -32,7 +32,7 @@
     
 ###初始化
 
-    var options = {
+    var iv = new imageViewer("imageViewer", {
         sources: ["img/img_1.jpg"],
         onPreLoad: function() {
             container.style.backgroundImage = "url('img/loading.gif')";
@@ -40,6 +40,5 @@
         onLoad: function() {
             container.style.backgroundImage = "";
         }
-    },
-    iv = new imageViewer("imageViewer", options);
+    });
 
