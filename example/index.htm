@@ -2,32 +2,29 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8"/>
-	<title>js图片查看器(可缩放、旋转、翻转)</title>
+	<title>js图片查看器</title>
 	<link rel="stylesheet" href="css/demo.css" />
-    <link rel="stylesheet" href="../dist/css/imageViewer.min.css" />
-    <script src="js/commonJS/common.min.js"></script>
+    <link rel="stylesheet" href="../dist/css/imageViewer.css" />
+    <script src="js/commonJS/common.js"></script>
 	<script src="../dist/js/imageViewer.js"></script>
-</head>
-<body>
-    <div id="imageViewer"></div>
-    <div id="tools">
-        <input id="imageZoomin" type="button" value="放大">
-        <input id="imageZoomout" type="button" value="缩小">
-        <input id="imageLeft" type="button" value="向左旋转">
-        <input id="imageRight" type="button" value="向右旋转">
-        <input id="imageVertical" type="button" value="垂直翻转">
-        <input id="imageHorizontal" type="button" value="水平翻转">
-        <input id="imageReset" type="button" value="重置"><br>
-        <span>注：鼠标左键拖动图片，鼠标中键旋转图片，鼠标滚动缩放图片。</span>
-    </div>
     <script>
-        (function() {
-
+        COM.$W.domReady(function() {
             var container = COM.$D.byID("imageViewer");
 
             // 初始化imageViewer
             var iv = new imageViewer("imageViewer", {
-                sources: ["img/img_1.jpg"],
+                sources: [
+                    "img/img_1.jpg",
+                    "img/img_2.jpg",
+                    "img/img_3.jpg",
+                    "img/img_4.jpg",
+                    "img/img_5.jpg",
+                    "img/img_1.jpg",
+                    "img/img_2.jpg",
+                    "img/img_3.jpg",
+                    "img/img_4.jpg",
+                    "img/img_5.jpg"
+                ],
                 onPreLoad: function() {
                     container.style.backgroundImage = "url('img/loading.gif')";
                 },
@@ -35,43 +32,10 @@
                     container.style.backgroundImage = "";
                 }
             });
-
-            // 放大
-            COM.$D.byID("imageZoomin").onclick = function() {
-                iv.zoomin();
-            };
-
-            // 缩小
-            COM.$D.byID("imageZoomout").onclick = function() {
-                iv.zoomout();
-            };
-
-            // 垂直翻转
-            COM.$D.byID("imageVertical").onclick = function() {
-                iv.vertical();
-            };
-
-            // 水平翻转
-            COM.$D.byID("imageHorizontal").onclick = function() {
-                iv.horizontal();
-            };
-
-            // 向左旋转90度
-            COM.$D.byID("imageLeft").onclick = function() {
-                iv.left();
-            };
-
-            // 向右旋转90度
-            COM.$D.byID("imageRight").onclick = function() {
-                iv.right();
-            };
-
-            // 重置
-            COM.$D.byID("imageReset").onclick = function() {
-                iv.reset();
-            };
-
-        })();
+        });
     </script>
+</head>
+<body>
+    <div id="imageViewer"></div>
 </body>
 </html>

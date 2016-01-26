@@ -5,17 +5,23 @@
     // 图片查看容器对象
     var imageViewer = window.imageViewer = function(container, options) {
         this._initialize(container, options);
+
+        // 初始化模式
         this._initMode();
+
+        // 工具条添加事件
+        this._toolsAddEvent();
+
+        // 判断是否支持变换
         if (this._support) {
-            this._initContainer();
+            this._initContainer(); // 初始化容器
             this._init();
             if (this.options.sources.length > 0) {
-                // 默认加载第一张
-                this.load(this.options.sources[0]);
+                this.load(this.options.sources[0]); // 默认加载第一张
             } else {
                 this.onError("without a image.");
             }
-        }else { // 模式不支持
+        } else { // 模式不支持
             this.onError("not support this mode.");
         }
     };
@@ -23,11 +29,33 @@
     imageViewer.prototype = {
         // 初始化程序
         _initialize: function(containerId, options) {
-            var container = this._container = COM.$D.byID(containerId);
-            this._clientWidth = container.clientWidth; // 变换区域宽度
-            this._clientHeight = container.clientHeight; // 变换区域高度
-            this._img = new Image(); // 图片对象
-            this._style = {}; // 备份样式
+            var imageContext = COM.$D.byID(containerId);
+            imageContext.innerHTML =
+                '<div class="imageViewerContext">' +
+                '<div class="imageViewer"></div>' +
+                '<div class="smallImageViewer">' +
+                '<div class="previousImg toImg" title="向左查看"> << </div>' +
+                '<div class="nextImg toImg" title="向右查看"> >> </div>' +
+                '<div class="moreImg"></div>' +
+                '</div>' +
+                '<div class="imageTools">' +
+                '<button class="btn imageZoomin">放大</button>' +
+                '<button class="btn imageZoomout" value="缩小">缩小</button>' +
+                '<button class="btn rotateLeft" value="向左旋转">向左旋转</button>' +
+                '<button class="btn rotateRight" value="向右旋转">向右旋转</button>' +
+                '<button class="btn flipVertical" value="垂直翻转">垂直翻转</button>' +
+                '<button class="btn flipHorizontal" value="水平翻转">水平翻转</button>' +
+                '<button class="btn imageReset">重置</button>' +
+                '</div>' +
+                '</div>';
+            var container = this._container = COM.$D.byClassName("imageViewer")[0];
+            var moreImg = this._moreImg = COM.$D.byClassName("moreImg")[0];
+            // 计算图片显示区域的高度，150px为小图区和工具栏的总高度
+            COM.$D.setStyle(container, "height", (imageContext.clientHeight - 150) + "px");
+            this._clientWidth = container.clientWidth; // 显示区域宽度
+            this._clientHeight = container.clientHeight; // 显示区域高度
+            this._img = new Image(); // 显示区域的图片对象
+            this._style = {}; // 备份容器样式
             this._x = this._y = 1; // 水平/垂直变换参数
             this._radian = 0; // 旋转变换参数
             this._support = false; // 是否支持变换
@@ -35,6 +63,14 @@
 
             // 设置默认属性
             var opt = this._setOptions(options);
+
+            // 小图区展示图片
+            COM.$A.forEach(opt.sources, function(url) {
+                var img = new Image();
+                img.src = url;
+                moreImg.appendChild(img);
+            });
+
             this._zoom = opt.zoom;
             this.onPreLoad = opt.onPreLoad;
             this.onLoad = opt.onLoad;
@@ -45,7 +81,70 @@
                 this.reset();
                 this._img.style.visibility = "visible";
             }, this);
+
+            // 初始化完成，执行"init"事件
             COM.$CE.fireEvent(this, "init");
+        },
+
+        _toolsAddEvent: function() {
+            var ivThis = this;
+
+            // 放大
+            COM.$E.addEvent(COM.$D.byClassName("imageZoomin")[0], "click", function() {
+                ivThis.zoomin();
+            });
+
+            // 缩小
+            COM.$E.addEvent(COM.$D.byClassName("imageZoomout")[0], "click", function() {
+                ivThis.zoomout();
+            });
+
+            // 垂直翻转
+            COM.$E.addEvent(COM.$D.byClassName("flipVertical")[0], "click", function() {
+                ivThis.vertical();
+            });
+
+            // 水平翻转
+            COM.$E.addEvent(COM.$D.byClassName("flipHorizontal")[0], "click", function() {
+                ivThis.horizontal();
+            });
+
+            // 向左旋转90度
+            COM.$E.addEvent(COM.$D.byClassName("rotateLeft")[0], "click", function() {
+                ivThis.left();
+            });
+
+            // 向右旋转90度
+            COM.$E.addEvent(COM.$D.byClassName("rotateRight")[0], "click", function() {
+                ivThis.right();
+            });
+
+            // 重置
+            COM.$E.addEvent(COM.$D.byClassName("imageReset")[0], "click", function() {
+                ivThis.reset();
+            });
+
+            // 向左查看
+            COM.$E.addEvent(COM.$D.byClassName("previousImg")[0], "click", function(event) {
+                var moveVal = (Number(COM.$D.getStyle(ivThis._moreImg, "left").split("px")[0]) + ivThis.options.step);
+                moveVal < 0 ? COM.$D.setStyle(ivThis._moreImg, "left", moveVal  + "px") : COM.$D.setStyle(ivThis._moreImg, "left", 0);
+            });
+
+            // 向右查看
+            COM.$E.addEvent(COM.$D.byClassName("nextImg")[0], "click", function(event) {
+                ivThis._offsetLeft =
+                    ivThis._clientWidth <= ivThis._moreImg.offsetWidth ?
+                    ivThis._moreImg.offsetWidth - ivThis._clientWidth + ivThis.options.step : 0;
+                var moveVal = (Number(COM.$D.getStyle(ivThis._moreImg, "left").split("px")[0]) - ivThis.options.step);
+                -ivThis._offsetLeft < moveVal ? COM.$D.setStyle(ivThis._moreImg, "left", moveVal  + "px") : -ivThis._offsetLeft;
+            });
+
+            // 小图点击加载
+            COM.$A.forEach(COM.$D.byClassName("moreImg")[0].getElementsByTagName("img"), function(item) {
+                COM.$E.addEvent(item, "click", function(event) {
+                    ivThis.load(event.target.src);
+                });
+            });
         },
 
         // 设置默认属性
@@ -53,6 +152,7 @@
             this.options = {
                 sources: [],
                 mode: "css3|filter|canvas",
+                step: 150, // 小图滚动的像素值
                 zoom: 0.1, // 缩放比率
                 onPreLoad: function() {}, // 图片加载前执行
                 onLoad: function() {}, // 图片加载后执行
@@ -133,7 +233,7 @@
             }
         },
 
-        //销毁程序
+        // 销毁程序
         dispose: function() {
             if (this._support) {
                 this._dispose();
@@ -146,22 +246,17 @@
 
     // 变换模式
     imageViewer.modes = (function() {
-        //ccs3变换样式
         var css3Transform;
 
         // 初始化图片对象函数
         function initImg(img, container) {
             COM.$D.setStyle(img, {
                 position: "absolute",
-
-                // 重置样式
                 border: 0,
                 padding: 0,
                 margin: 0,
                 width: "auto",
                 height: "auto",
-
-                // 加载前隐藏
                 visibility: "hidden"
             });
             container.appendChild(img);
