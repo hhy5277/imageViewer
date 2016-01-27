@@ -209,7 +209,6 @@
                 img.onerror || (img.onerror = function() {
                     ivThis.onError("err image");
                 });
-                img.style.left = -9999;
                 img.src = src;
             }
         },
