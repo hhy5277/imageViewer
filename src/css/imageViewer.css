@@ -7,11 +7,16 @@
     min-width: 400px;
     min-height: 400px;
 }
+/*.imageViewer*/
+.imageViewer img {
+    transition: left 0.6s ease-out;
+}
 /*.smallImageViewer*/
 .imageViewerContext .smallImageViewer {
-    margin: 2px auto;
-    width: 800px;
-    height: 100px;
+    border-top: 2px solid #000;
+    border-bottom: 2px solid #000;
+    margin-top: 2px;
+    height: 98px;
     position: relative;
     overflow: hidden;
     white-space: nowrap;
@@ -22,42 +27,44 @@
     z-index: 1;
     top: 0;
     left: 0;
-    transition: left 0.2s;
+    transition: left 0.6s ease-out;
 }
 .imageViewerContext .smallImageViewer .moreImg img {
     cursor: pointer;
-    transition: all 0.5s;
     margin: 0 5px 0 0;
     height: 100%;
+    border-left: 1px solid #000;
+    border-right: 1px solid #000;
+    transition: all 0.5s;
 }
 .imageViewerContext .smallImageViewer .moreImg img:hover {
-    cursor: pointer;
     transform: matrix(1.5, 0, 0, 1.5, 0, 0);
 }
 .imageViewerContext .smallImageViewer .toImg {
     height: 100%;
-    width: 30px;
-    color: #ffffff;
+    width: 25px;
+    color: #fff;
     text-align: center;
     line-height: 100px;
     font-weight: 400;
-    opacity: 0.2;
+    opacity: 0.4;
     cursor: pointer;
     overflow: hidden;
-    background-color: #337ab7;
+    background-color: #000;
     position: absolute;
     z-index: 2;
+    top: 0;
+    user-select: none;
     transition: opacity 0.5s;
 }
 .imageViewerContext .smallImageViewer .toImg:hover {
+    color: #fff;
     opacity: 0.8;
 }
 .imageViewerContext .smallImageViewer .previousImg {
-    top: 0;
     left: 0;
 }
 .imageViewerContext .smallImageViewer .nextImg {
-    top: 0;
     right: 0;
 }
 /*.imageTools*/
@@ -68,9 +75,9 @@
 }
 .imageViewerContext .imageTools .btn {
     margin: 0 5px;
-    padding: 6px 12px;
+    padding: 4px 8px;
     color: #333;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 400;
     line-height: 1.42857143;
     display: inline-block;
@@ -85,6 +92,7 @@
     cursor: pointer;
 }
 .imageViewerContext .imageTools .btn:hover {
-    background-color: #e6e6e6;
+    color: #333;
+    background-color: #ccc;
     border-color: #adadad;
 }

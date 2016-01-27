@@ -29,7 +29,7 @@
     imageViewer.prototype = {
         // 初始化程序
         _initialize: function(containerId, options) {
-            var imageContext = COM.$D.byID(containerId);
+            var imageContext = COM.$D.byId(containerId);
             imageContext.innerHTML =
                 '<div class="imageViewerContext">' +
                 '<div class="imageViewer"></div>' +
@@ -79,7 +79,6 @@
                 this.onLoad();
                 this._load();
                 this.reset();
-                this._img.style.visibility = "visible";
             }, this);
 
             // 初始化完成，执行"init"事件
@@ -126,17 +125,16 @@
 
             // 向左查看
             COM.$E.addEvent(COM.$D.byClassName("previousImg")[0], "click", function(event) {
-                var moveVal = (Number(COM.$D.getStyle(ivThis._moreImg, "left").split("px")[0]) + ivThis.options.step);
+                var moveVal = (Number(COM.$D.getStyle(ivThis._moreImg, "left").split("px")[0]) + ivThis._clientWidth);
                 moveVal < 0 ? COM.$D.setStyle(ivThis._moreImg, "left", moveVal  + "px") : COM.$D.setStyle(ivThis._moreImg, "left", 0);
             });
 
             // 向右查看
             COM.$E.addEvent(COM.$D.byClassName("nextImg")[0], "click", function(event) {
-                ivThis._offsetLeft =
-                    ivThis._clientWidth <= ivThis._moreImg.offsetWidth ?
-                    ivThis._moreImg.offsetWidth - ivThis._clientWidth + ivThis.options.step : 0;
-                var moveVal = (Number(COM.$D.getStyle(ivThis._moreImg, "left").split("px")[0]) - ivThis.options.step);
-                -ivThis._offsetLeft < moveVal ? COM.$D.setStyle(ivThis._moreImg, "left", moveVal  + "px") : -ivThis._offsetLeft;
+                var moveVal = (Number(COM.$D.getStyle(ivThis._moreImg, "left").split("px")[0])) - ivThis._clientWidth;
+                if (-ivThis._moreImg.clientWidth < moveVal) {
+                    COM.$D.setStyle(ivThis._moreImg, "left", moveVal  + "px");
+                }
             });
 
             // 小图点击加载
@@ -152,7 +150,6 @@
             this.options = {
                 sources: [],
                 mode: "css3|filter|canvas",
-                step: 150, // 小图滚动的像素值
                 zoom: 0.1, // 缩放比率
                 onPreLoad: function() {}, // 图片加载前执行
                 onLoad: function() {}, // 图片加载后执行
@@ -204,15 +201,15 @@
 
         // 加载图片
         load: function(src) {
-            if (this._support) {
-                var img = this._img,
-                    oThis = this;
-                img.onload || (img.onload = this._LOAD);
+            var ivThis = this;
+            var img = ivThis._img;
+            if (ivThis._support) {
+                ivThis.onPreLoad();
+                img.onload || (img.onload = ivThis._LOAD);
                 img.onerror || (img.onerror = function() {
-                    oThis.onError("err image");
+                    ivThis.onError("err image");
                 });
-                img.style.visibility = "hidden";
-                this.onPreLoad();
+                img.style.left = -9999;
                 img.src = src;
             }
         },
@@ -256,7 +253,7 @@
                 padding: 0,
                 margin: 0,
                 width: "auto",
-                height: "auto",
+                height: "100%",
                 visibility: "hidden"
             });
             container.appendChild(img);
@@ -477,24 +474,29 @@
         var temptop = 0;
         var templeft = 0;
 
+        // 记录当前点击的鼠标按键序号
+        var eButton = 0;
+
         // 开始函数
         function start(e) {
-            var container = this._container,
-                hasebtn = typeof e.button === "number";
+            var container = this._container;
+                eButton = e.button;
 
-            // 判断鼠标中键
-            if (hasebtn && e.button === 1) {
+            // 鼠标中键
+            if (eButton === 1) {
                 var rect = COM.$D.clientRect(this._container);
                 this._mrX = rect.left + this._clientWidth / 2;
                 this._mrY = rect.top + this._clientHeight / 2;
 
                 /*
-                 * Math.atan2(y,x) 返回从X轴到点(x,y)之间的角度
+                 * Math.atan2(y,x) 返回从X轴到点(x,y)之间的弧度
                  * 参数：y坐标在x坐标之前传递
-                 * 返回值：-PI 到 PI 之间的值，是从X轴正向逆时针旋转到点(x,y)时经过的角度
+                 * 返回值：-PI 到 PI 之间的值，是从X轴正向逆时针旋转到点(x,y)时经过的弧度
+                 *
+                 * 记录当前图片的弧度
                  * */
                 this._mrRadian = Math.atan2(e.clientY - this._mrY, e.clientX - this._mrX) - this._radian;
-            } else if (hasebtn && e.button === 0) { // 鼠标左键
+            } else if (eButton === 0) { // 鼠标左键
                 this._mrX = e.clientX;
                 this._mrY = e.clientY;
                 if (this._context) {
@@ -522,10 +524,9 @@
 
         // 拖动函数
         function move(e) {
-            var hasebtn = typeof e.button === "number";
-            if (hasebtn && e.button === 1) {
+            if (eButton === 1) {
                 this.rotate(Math.atan2(e.clientY - this._mrY, e.clientX - this._mrX) - this._mrRadian);
-            } else if (hasebtn && e.button === 0) {
+            } else if (eButton === 0) {
                 var offsetY = parseInt(e.clientY - this._mrY);
                 var offsetX = parseInt(e.clientX - this._mrX);
                 if (this._context) {

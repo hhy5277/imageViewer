@@ -2,29 +2,20 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8"/>
-	<title>js图片查看器</title>
+	<title>图片查看器</title>
 	<link rel="stylesheet" href="css/demo.css" />
     <link rel="stylesheet" href="../dist/css/imageViewer.css" />
     <script src="js/commonJS/common.js"></script>
 	<script src="../dist/js/imageViewer.js"></script>
     <script>
         COM.$W.domReady(function() {
-            var container = COM.$D.byID("imageViewer");
-
-            // 初始化imageViewer
+            var container = COM.$D.byId("imageViewer");
+            var imgs = [];
+            for (var i = 0; i < 12; i++) {
+                imgs.push("img/img_" + (i + 1) +".jpg");
+            }
             var iv = new imageViewer("imageViewer", {
-                sources: [
-                    "img/img_1.jpg",
-                    "img/img_2.jpg",
-                    "img/img_3.jpg",
-                    "img/img_4.jpg",
-                    "img/img_5.jpg",
-                    "img/img_1.jpg",
-                    "img/img_2.jpg",
-                    "img/img_3.jpg",
-                    "img/img_4.jpg",
-                    "img/img_5.jpg"
-                ],
+                sources: imgs,
                 onPreLoad: function() {
                     container.style.backgroundImage = "url('img/loading.gif')";
                 },
