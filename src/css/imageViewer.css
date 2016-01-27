@@ -7,10 +7,6 @@
     min-width: 400px;
     min-height: 400px;
 }
-/*.imageViewer*/
-.imageViewer img {
-    transition: left 0.6s ease-out;
-}
 /*.smallImageViewer*/
 .imageViewerContext .smallImageViewer {
     border-top: 2px solid #000;
@@ -31,7 +27,7 @@
 }
 .imageViewerContext .smallImageViewer .moreImg img {
     cursor: pointer;
-    margin: 0 5px 0 0;
+    margin: 0 2px 0 0;
     height: 100%;
     border-left: 1px solid #000;
     border-right: 1px solid #000;

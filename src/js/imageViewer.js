@@ -40,11 +40,11 @@
                 '</div>' +
                 '<div class="imageTools">' +
                 '<button class="btn imageZoomin">放大</button>' +
-                '<button class="btn imageZoomout" value="缩小">缩小</button>' +
-                '<button class="btn rotateLeft" value="向左旋转">向左旋转</button>' +
-                '<button class="btn rotateRight" value="向右旋转">向右旋转</button>' +
-                '<button class="btn flipVertical" value="垂直翻转">垂直翻转</button>' +
-                '<button class="btn flipHorizontal" value="水平翻转">水平翻转</button>' +
+                '<button class="btn imageZoomout">缩小</button>' +
+                '<button class="btn rotateLeft">向左旋转</button>' +
+                '<button class="btn rotateRight">向右旋转</button>' +
+                '<button class="btn flipVertical">垂直翻转</button>' +
+                '<button class="btn flipHorizontal">水平翻转</button>' +
                 '<button class="btn imageReset">重置</button>' +
                 '</div>' +
                 '</div>';
@@ -209,7 +209,6 @@
                 img.onerror || (img.onerror = function() {
                     ivThis.onError("err image");
                 });
-                img.style.left = -9999;
                 img.src = src;
             }
         },
