@@ -9,10 +9,10 @@
 }
 /*.smallImageViewer*/
 .imageViewerContext .smallImageViewer {
-    border-top: 2px solid #000;
-    border-bottom: 2px solid #000;
+    border-top: 1px solid #000;
+    border-bottom: 1px solid #000;
     margin-top: 2px;
-    height: 98px;
+    height: 100px;
     position: relative;
     overflow: hidden;
     white-space: nowrap;
@@ -31,11 +31,15 @@
     height: 100%;
     border-left: 1px solid #000;
     border-right: 1px solid #000;
-    transition: all 0.5s;
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    transition: -webkit-transform 0.5s;
+    transition: transform 0.5s;
+    transition: transform 0.5s, -webkit-transform 0.5s;
 }
 .imageViewerContext .smallImageViewer .moreImg img:hover {
-    -webkit-transform: matrix(1.5, 0, 0, 1.5, 0, 0);
-    transform: matrix(1.5, 0, 0, 1.5, 0, 0);
+    -webkit-transform: scale(1.5);
+    transform: scale(1.5);
 }
 .imageViewerContext .smallImageViewer .toImg {
     height: 100%;
@@ -49,7 +53,7 @@
     overflow: hidden;
     background-color: #000;
     position: absolute;
-    z-index: 2;
+    z-index: 9;
     top: 0;
     -webkit-user-select: none;
     -moz-user-select: none;
