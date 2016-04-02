@@ -173,9 +173,10 @@
 
                     //扩展变换方法
                     COM.$A.forEach(imageViewer.transforms, function(transform, name) {
+                        var com_this = this;
                         this[name] = function() {
                             transform.apply(this, [].slice.call(arguments));
-                            this._show();
+                            com_this._show();
                         }
                     }, this);
                     return true;
@@ -483,7 +484,7 @@
 
             // 鼠标中键
             if (eButton === 1) {
-                var rect = COM.$D.clientRect(this._container);
+                var rect = COM.$D.getClientRect(this._container);
                 this._mrX = rect.left + this._clientWidth / 2;
                 this._mrY = rect.top + this._clientHeight / 2;
 
