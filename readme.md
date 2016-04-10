@@ -27,7 +27,7 @@ options = {
 ```html
 // common.min.js是自己维护的一个js库，汇集了开发时常用的方法
 // github: https://github.com/laixiangran/commonJS
-<script src="http://www.laixiangran.cn/CDN/common.js"></script>
+<script src="http://www.laixiangran.cn/CDN/common.min.js"></script>
 <script src="../dist/js/imageViewer.min.js"></script>
 ```
     
