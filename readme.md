@@ -1,13 +1,16 @@
-#图片查看器 imageViewer v1.0.0
-##简介
+# 图片查看器 imageViewer v1.2
+
+## 简介
 
 纯javascript图片查看器，可缩放（滚轮）、旋转（中键）、平移（左键）、翻转
 
-###模式
+支持导出为jQuery插件，CMD模块，AMD模块，全局变量
+
+### 模式
 
 三种模式 -- `CSS3`、`filter`、`canvas`
 
-###默认属性
+### 默认属性
 
 ```javascript
 options = {
@@ -20,9 +23,9 @@ options = {
         };
 ```
 
-##使用
+## 使用
 
-###引入
+### 引入
 
 ```html
 // common.min.js是自己维护的一个js库，汇集了开发时常用的方法
@@ -31,13 +34,13 @@ options = {
 <script src="../dist/js/imageViewer.min.js"></script>
 ```
     
-###添加容器
+### 添加容器
 
 ```html
 <div id="imageViewer"></div>
 ```
 
-###初始化
+### 初始化
 
 ```javascript
 var iv = new imageViewer("imageViewer", {

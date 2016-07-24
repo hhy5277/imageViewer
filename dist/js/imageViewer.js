@@ -3,7 +3,7 @@
     "use strict";
 
     // 图片查看容器对象
-    var imageViewer = window.imageViewer = function(container, options) {
+    var imageViewer = function(container, options) {
         this._initialize(container, options);
 
         // 初始化模式
@@ -607,10 +607,34 @@
         }
     })();
 
-    // 导出为AMD模块
-    if (typeof define === "function") {
-        define([], function() {
+    /*
+     * 导出模块
+     */
+
+    var exported = false;
+
+    // jQuery
+    if (typeof window.jQuery === "function") {
+        window.$.fn.imageViewer = imageViewer;
+        exported = true;
+    }
+
+    // CMD
+    if (typeof define === "function" && define.amd) {
+        define(function () {
             return imageViewer;
         });
+        exported = true;
+    }
+
+    // AMD
+    if (typeof module !== "undefined" && module.exports) {
+        module.exports = imageViewer;
+        exported = true;
+    }
+
+    // Global
+    if (!exported) {
+        window.imageViewer = imageViewer;
     }
 }(window));
